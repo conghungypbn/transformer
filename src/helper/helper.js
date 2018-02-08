@@ -5,9 +5,7 @@
  * @return {undefined}        undefined
  */
 function removePrefix(object) {
-  if (typeof object !== 'object') {
-    return;
-  }
+  if (typeof object !== 'object') return;
 
   Object.keys(object).forEach(f => {
     if (f !== undefined && f !== null) {
@@ -21,33 +19,6 @@ function removePrefix(object) {
       }
     }
   });
-}
-
-/**
- * makeClone - Make a clone of an object
- *
- * @param  {object} object the object
- * @return {object}        the clone
- */
-function makeClone(object) {
-  if (typeof object !== 'object') {
-    return object;
-  }
-
-  const clone = new object.constructor();
-  Object.keys(object).forEach(f => {
-    if (f !== undefined && f !== null) {
-      if (object[f] !== undefined) {
-        if (typeof object[f] === 'object') {
-          clone[f] = makeClone(object[f]);
-        } else {
-          clone[f] = object[f];
-        }
-      }
-    }
-  });
-
-  return clone;
 }
 
 /**

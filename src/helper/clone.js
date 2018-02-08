@@ -33,7 +33,9 @@ function makeClone(object, references = { origin: [], clone: [] }) {
 
   Object.getOwnPropertyNames(object).forEach(fieldKey => {
     const descriptor = Object.getOwnPropertyDescriptor(object, fieldKey);
-    descriptor.value = typeof object[fieldKey] === 'object' ? makeClone(descriptor.value, references) : descriptor.value;
+    if ('value' in descriptor) {
+      descriptor.value = typeof object[fieldKey] === 'object' ? makeClone(descriptor.value, references) : descriptor.value;
+    }
 
     Object.defineProperty(clone, fieldKey, descriptor);
   });
