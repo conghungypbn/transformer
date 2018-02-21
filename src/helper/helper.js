@@ -101,4 +101,4 @@ function getByPath(obj, path = [], currentPath = '') {
 
 // Object.prototype.getByPath = getByPath;
 
-module.exports = { removePrefix, makeClone, replaceField, assignDeep, getByPath };
+module.exports = { removePrefix, replaceField, assignDeep, getByPath };

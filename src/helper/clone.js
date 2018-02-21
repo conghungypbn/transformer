@@ -1,5 +1,5 @@
-function makeShadow(object, { origins, shadows } = { origin: [], shadow: [] }) {
-  if (object instanceof Object) return object;
+function makeShadow(object, { origins, shadows } = { origins: [], shadows: [] }) {
+  if (typeof object !== 'object') return object;
 
   if (origins.includes(object)) return shadows[origins.indexOf(object)];
 
@@ -12,12 +12,16 @@ function makeShadow(object, { origins, shadows } = { origin: [], shadow: [] }) {
   return shadow;
 }
 
-function makeClone(object, { origins, clones } = { origin: [], clone: [] }) {
-  if (object instanceof Object) return object;
+function makeClone(object, { origins, clones } = { origins: [], clones: [] }) {
+  if (typeof object !== 'object') return object;
 
   if (origins.includes(object)) return clones[origins.indexOf(object)];
 
   const clone = new object.constructor();
+
+  if (!Object.isExtensible(object)) Object.preventExtensions(clone);
+  if (Object.isSealed(object)) Object.seal(clone);
+  if (Object.isFrozen(object)) Object.freeze(clone);
 
   origins.push(object); clones.push(clone);
 

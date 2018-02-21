@@ -1,7 +1,5 @@
-const chai = require('chai');
+const expect = require('chai').expect;
 const Transformer = require('../src/Transformer');
-
-const expect = chai.expect;
 
 const doNothing = () => { };
 describe('Transformer', () => {
