@@ -1,5 +1,5 @@
 function makeShadow(object, { origins, shadows } = { origin: [], shadow: [] }) {
-  if (typeof object !== 'object') return object;
+  if (object instanceof Object) return object;
 
   if (origins.includes(object)) return shadows[origins.indexOf(object)];
 
@@ -13,7 +13,7 @@ function makeShadow(object, { origins, shadows } = { origin: [], shadow: [] }) {
 }
 
 function makeClone(object, { origins, clones } = { origin: [], clone: [] }) {
-  if (typeof object !== 'object') return object;
+  if (object instanceof Object) return object;
 
   if (origins.includes(object)) return clones[origins.indexOf(object)];
 
