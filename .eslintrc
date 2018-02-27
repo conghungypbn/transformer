@@ -14,6 +14,12 @@
     "generator-star-spacing": 0,
     "require-yield": 0,
     "global-require": 0,
+    "no-underscore-dangle": ["error", { "allowAfterThis": true }],
+    "quotes": ["error", "single", { "allowTemplateLiterals": true }],
+    "no-unused-expressions": ["error", {
+      "allowShortCircuit": true,
+      "allowTernary": true,
+    }],
     "max-len": ["error", {
       "ignoreUrls": true,
       "ignoreTrailingComments": true,

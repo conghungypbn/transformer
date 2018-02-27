@@ -36,8 +36,6 @@ describe('Transformer', () => {
       d: [{ e: 'hahahahaha' }],
     });
 
-    console.log('newObj:', newObj);
-
     expect(newObj).to.deep.equal({
       x: '1234567',
       y: 'CongHung',
