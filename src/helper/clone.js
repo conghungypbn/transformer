@@ -1,43 +1,39 @@
-function makeShadow(object, references = { origin: [], shadow: [] }) {
+function makeShadow(object, { origins, shadows } = { origins: [], shadows: [] }) {
   if (typeof object !== 'object') return object;
 
-  const index = references.origin.indexOf(object);
-  if (references.origin.includes(object)) {
-    return references.shadow[index];
-  }
+  if (origins.includes(object)) return shadows[origins.indexOf(object)];
 
   const shadow = new object.constructor();
 
-  references.origin.push(object);
-  references.shadow.push(shadow);
+  origins.push(object); shadows.push(shadow);
 
-  Object
-  .keys(object)
-  .forEach(fieldKey => (shadow[fieldKey] = makeShadow(object[fieldKey], references)));
+  Object.keys(object).forEach(f => (shadow[f] = makeShadow(object[f], { origins, shadows })));
 
   return shadow;
 }
 
-function makeClone(object, references = { origin: [], clone: [] }) {
+function makeClone(object, { origins, clones } = { origins: [], clones: [] }) {
   if (typeof object !== 'object') return object;
 
-  const index = references.origin.indexOf(object);
-  if (references.origin.includes(object)) {
-    return references.clone[index];
-  }
+  if (origins.includes(object)) return clones[origins.indexOf(object)];
 
   const clone = new object.constructor();
 
-  references.origin.push(object);
-  references.clone.push(clone);
+  if (!Object.isExtensible(object)) Object.preventExtensions(clone);
+  if (Object.isSealed(object)) Object.seal(clone);
+  if (Object.isFrozen(object)) Object.freeze(clone);
 
-  Object.getOwnPropertyNames(object).forEach(fieldKey => {
-    const descriptor = Object.getOwnPropertyDescriptor(object, fieldKey);
+  origins.push(object); clones.push(clone);
+
+  Object.getOwnPropertyNames(object).forEach(f => {
+    const descriptor = Object.getOwnPropertyDescriptor(object, f);
     if ('value' in descriptor) {
-      descriptor.value = typeof object[fieldKey] === 'object' ? makeClone(descriptor.value, references) : descriptor.value;
-    }
+      descriptor.value = typeof object[f] === 'object'
+      ? makeClone(descriptor.value, { origins, clones })
+      : descriptor.value;
+    } // only need to do this if the property is not a getter/setter.
 
-    Object.defineProperty(clone, fieldKey, descriptor);
+    Object.defineProperty(clone, f, descriptor);
   });
 
   return clone;

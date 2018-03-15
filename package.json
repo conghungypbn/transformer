@@ -4,12 +4,10 @@
   "description": "create transformable object",
   "main": "Transformer.js",
   "scripts": {
-    "test": "mocha test/"
-  },
-  "dependencies": {
-    "chai": "^3.5.0"
+    "test": "mocha tests/*"
   },
   "devDependencies": {
+    "chai": "^3.5.0",
     "eslint": "^3.3.1",
     "eslint-config-airbnb-base": "^5.0.2",
     "dirty-chai": "^1.2.2",
