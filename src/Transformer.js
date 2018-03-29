@@ -10,8 +10,9 @@ function getAllDataPathFromTemplate(template, path = []) {
   if (isMappingArray(template)) return [Object.assign(path, { key: template[0]['**'] })];
   if (typeof template !== 'object') return [];
 
-  const paths = Object.keys(template)
-    .reduce((all, key) => all.concat(getAllDataPathFromTemplate(template[key], [...path, key])), []);
+  const paths = Object
+  .keys(template)
+  .reduce((all, key) => all.concat(getAllDataPathFromTemplate(template[key], [...path, key])), []);
 
   return paths;
 }
@@ -80,13 +81,13 @@ function proc(object, template, processor) {
 
   if (Array.isArray(object)) {
     object.forEach(subObject => proc(subObject, template[0], processor));
-  } else {
-    Object.keys(object).forEach(k => {
-      if (typeof object[k] === 'object' && template[k]) {
-        proc(object[k], template[k], processor);
-      }
-    });
+    return;
   }
+  Object.keys(object).forEach(k => {
+    if (typeof object[k] === 'object' && template[k]) {
+      proc(object[k], template[k], processor);
+    }
+  });
 
   const id = template.$$;
   if (processor[id]) processor[id](object);
