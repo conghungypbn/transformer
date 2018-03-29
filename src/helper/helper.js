@@ -17,17 +17,23 @@ const assignDeepOne = (dst, src) => {
   if (typeof dst !== 'object') return src;
 
   Object.keys(src).forEach(f => {
-    if (f !== undefined && f !== null && src[f] !== undefined && typeof src[f] === 'object') {
+    if (typeof src[f] === 'object') {
       if (!dst[f]) dst[f] = new src[f].constructor();
 
-      assignDeepOne(dst[f], src[f]);
+      return assignDeepOne(dst[f], src[f]);
     }
+    dst[f] = src[f];
+
+    return dst;
   });
 
   return dst;
 };
 
-const assignDeep = (dst, ...srcs) => srcs.forEach(src => assignDeepOne(dst, src));
+const assignDeep = (dst, ...srcs) => {
+  srcs.forEach(src => assignDeepOne(dst, src));
+  return dst;
+};
 
 const replaceField = (object, field, value = null) => {
   if (typeof object !== 'object') return;
@@ -38,7 +44,7 @@ const replaceField = (object, field, value = null) => {
 };
 
 const GET_PROP_OF_ALL_ELEMENTS = Symbol('To get property of all element of Array');
-const getByPath = (obj, path = [], currentPath = '') => {
+const getByPath = (obj, path, currentPath = '') => {
   if (typeof path === 'string') path = path.split('.');
   if (!Array.isArray(path)) throw new Error('Invalid path: The path of property in object must be an Array or a String');
   if (path.length === 0) return obj;
@@ -48,7 +54,7 @@ const getByPath = (obj, path = [], currentPath = '') => {
   if (subPath === GET_PROP_OF_ALL_ELEMENTS) {
     if (!Array.isArray(obj)) throw new Error(`Invalid path: ${currentPath} is not an Array`);
 
-    return obj.map((e, i) => getByPath(e, path.join('.'), `${currentPath}.[${i}]`));
+    return obj.map((e, i) => getByPath(e, [...path], `${currentPath}.[${i}]`));
   }
 
   if (typeof subPath !== 'string') throw new Error('Invalid path: The path can contain only string or Symbol to get all');
@@ -56,7 +62,7 @@ const getByPath = (obj, path = [], currentPath = '') => {
   return getByPath(obj[subPath], path, `${currentPath}.${subPath}`);
 };
 
-// getByPath['$INDEX'] = GET_PROP_OF_ALL_ELEMENTS;
+getByPath.$INDEX = GET_PROP_OF_ALL_ELEMENTS;
 
 // Object.prototype.getByPath = getByPath;
 

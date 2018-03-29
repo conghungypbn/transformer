@@ -9,6 +9,10 @@ describe('makeShadow/makeClone', () => {
   };
 
   [makeShadow, makeClone].forEach(f => {
+    it('return the value (non-object variable)', () => {
+      expect(f(1000)).to.equal(1000);
+    });
+
     it(`${f.name} can make a shadow of an object`, () => {
       const shadow = f(originalObject);
 
@@ -16,12 +20,18 @@ describe('makeShadow/makeClone', () => {
       expect(shadow.toString()).to.equal(originalObject.toString());
     });
 
+    describe('When we have an  circular object', () => {
+      it(`${f.name} can make a shadow of the circular Object`, () => {
+        const obj = { a: { c: 10 } };
+        obj.a.d = obj;
 
-    it(`${f.name} can make a shadow of circular Object`, () => {
-      originalObject.b.parent = originalObject;
+        const clone = f(obj);
 
-      const shadow = makeClone(originalObject);
-      expect(shadow).to.deep.equal(originalObject);
+        expect(clone).to.have.property('a');
+        expect(clone.a.c).to.equal(10);
+        expect(clone.a.d === clone).to.equal(true);
+        expect(clone).to.deep.equal(obj);
+      });
     });
   });
 });
@@ -138,8 +148,8 @@ describe('makeClone', () => {
     });
   });
 
-  describe('When we have a Proxy instance', () => {
-    const obj = {};
-    const proxy = new Proxy();
-  });
+  // describe('When we have a Proxy instance', () => {
+  //   const obj = {};
+  //   const proxy = new Proxy();
+  // });
 });
