@@ -4,7 +4,7 @@ const Transformer = require('../src/Transformer');
 
 const doNothing = () => { };
 describe('Transformer', () => {
-  it('can transform an object based on templates', () => {
+  it('can transform an object based on templates, and do it continuosly', () => {
     const transformer = new Transformer({
       from: {
         id: '##id',
@@ -41,6 +41,18 @@ describe('Transformer', () => {
       x: '1234567',
       y: 'CongHung',
       z: [{ w: 'hahahahaha' }],
+    });
+
+    const newObj2 = transformer.transform({
+      id: 'xxxxxx',
+      a: { b: { c: 'XYZ' } },
+      d: [{ e: 'huhuhhuhuhuhuhu' }],
+    });
+
+    expect(newObj2).to.deep.equal({
+      x: 'xxxxxx',
+      y: 'XYZ',
+      z: [{ w: 'huhuhhuhuhuhuhu' }],
     });
   });
 });
