@@ -46,9 +46,7 @@ function translate(fromObj, toObj, t, parent = undefined, key = undefined) {
 
       parent[key] = dataArr.map(subFrom => {
         const subTo = makeShadow(toObj[0]);
-        delete subFrom['**'];
         delete subTo['**'];
-        delete subFromTemplate['**'];
 
         return translate(subFrom, subTo, { from: subFromTemplate, to: subToTemplate });
       });
@@ -89,9 +87,8 @@ module.exports = class Transformer {
     this.processor = processor;
   }
 
-  transform(fromOrigin) {
+  transform(from) {
     const t = makeShadow(this.template);
-    const from = makeShadow(fromOrigin); // translator changes 'from'
     const to = makeShadow(t.to);
 
     invoke(from, t.from, this.processor.pre);
