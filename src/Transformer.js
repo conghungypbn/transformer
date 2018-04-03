@@ -4,8 +4,7 @@ const { getByPath } = require('./helper/helper');
 const isId = v => /^##/.test(v);
 const isMappingArray = arr => Array.isArray(arr) && typeof arr[0] === 'object' && arr[0]['**'];
 
-function getDataPaths(t, path = []) {
-  if (!t) return [];
+const getDataPaths = (t, path = []) => {
   if (isId(t)) return [Object.assign(path, { key: t })];
   if (isMappingArray(t)) return [Object.assign(path, { key: t[0]['**'] })];
   if (typeof t !== 'object') return [];
@@ -15,14 +14,12 @@ function getDataPaths(t, path = []) {
   .reduce((all, key) => all.concat(getDataPaths(t[key], [...path, key])), []);
 
   return paths;
-}
+};
 
-function getData(fromObj, fromTemplate) {
-  return getDataPaths(fromTemplate)
+const getData = (fromObj, fromTemplate) => getDataPaths(fromTemplate)
   .reduce((all, path) => Object.assign(all, { [path.key]: getByPath(fromObj, path) }), {});
-}
 
-function translate(fromObj, toObj, t, parent = undefined, key = undefined) {
+const translate = (fromObj, toObj, t, parent = undefined, key = undefined) => {
   const data = getData(fromObj, t.from);
 
   if (isId(toObj)) {
@@ -30,7 +27,7 @@ function translate(fromObj, toObj, t, parent = undefined, key = undefined) {
     return toObj;
   }
 
-  if (typeof toObj !== 'object') return toObj;
+  // if (typeof toObj !== 'object') return toObj;
 
   delete toObj.$$; // remove all procId of toObj;
 
@@ -39,38 +36,36 @@ function translate(fromObj, toObj, t, parent = undefined, key = undefined) {
     const toTemplateArray = getData(t.to, t.to);
     const id = toObj[0]['**'];
 
-    if (id in data) {
-      const dataArr = data[id];
-      const subFromTemplate = fromTemplateArray[id][0];
-      const subToTemplate = toTemplateArray[id];
+    if (!(id in data)) { delete parent[key]; return toObj; }
 
-      parent[key] = dataArr.map(subFrom => {
-        const subTo = makeShadow(toObj[0]);
-        delete subTo['**'];
+    const dataArr = data[id];
+    const subFromTemplate = fromTemplateArray[id][0];
+    const subToTemplate = toTemplateArray[id];
 
-        return translate(subFrom, subTo, { from: subFromTemplate, to: subToTemplate });
-      });
+    parent[key] = dataArr.map(subFrom => {
+      const subTo = makeShadow(toObj[0]);
+      delete subTo['**'];
 
-      return toObj;
-    }
+      return translate(subFrom, subTo, { from: subFromTemplate, to: subToTemplate });
+    });
+
+    return toObj;
   }
 
   Object.keys(toObj).forEach(k => {
-    if (k in toObj) {
-      translate(
-        fromObj,
-        toObj[k],
-        { from: t.from, to: toObj[k] },
-        toObj,
-        k
-      );
-    }
+    translate(
+      fromObj,
+      toObj[k],
+      { from: t.from, to: toObj[k] },
+      toObj,
+      k
+    );
   });
 
   return toObj;
-}
+};
 
-function invoke(o, t, processor) {
+const invoke = (o, t, processor) => {
   if (!o || !t) return;
 
   if (Array.isArray(o)) { o.forEach(subObj => invoke(subObj, t[0], processor)); return; }
@@ -79,12 +74,26 @@ function invoke(o, t, processor) {
 
   const id = t.$$;
   if (id in processor) processor[id](o);
-}
+};
+
+const error = (m) => { throw new Error(m); };
+const validateProcessor = t => {
+  Object
+  .keys(t)
+  .forEach(k => (/^@/.test(k) && typeof t[k] === 'function') || error('Invalid processor'));
+};
 
 module.exports = class Transformer {
   constructor(template, processor) {
     this.template = template;
     this.processor = processor;
+
+    this._validateProcessor();
+  }
+
+  _validateProcessor() {
+    validateProcessor(this.processor.pre);
+    validateProcessor(this.processor.post);
   }
 
   transform(from) {

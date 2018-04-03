@@ -27,6 +27,7 @@ describe('Transformer', () => {
           '**': '##array1',
           w: '##arrayField1',
         }],
+        i: [{ '**': '##nomatch' }],
         fghTotal: '##fgh',
       },
     }, {
@@ -41,7 +42,7 @@ describe('Transformer', () => {
     const newObj = transformer.transform({
       id: '1234567',
       a: { b: { c: 'CongHung' } },
-      d: [{ e: 'hahahahaha' }],
+      d: [{ e: 'hahahahaha' }, { e: 'hohohohohoho' }, { e: 'hihihihihi' }],
       f: 100,
       g: 200,
       h: 300,
@@ -50,7 +51,7 @@ describe('Transformer', () => {
     expect(newObj).to.deep.equal({
       x: '1234567',
       y: 'CongHung',
-      z: [{ w: 'hahahahaha' }],
+      z: [{ w: 'hahahahaha' }, { w: 'hohohohohoho' }, { w: 'hihihihihi' }],
       fghTotal: 600,
     });
 
@@ -60,11 +61,42 @@ describe('Transformer', () => {
       d: [{ e: 'huhuhhuhuhuhuhu' }],
     });
 
-    expect('x' in newObj2).to.be.equal(false);
+    expect('x' in newObj2).to.equal(false);
     expect(newObj2).to.deep.equal({
       y: 'XYZ',
       z: [{ w: 'huhuhhuhuhuhuhu' }],
       fghTotal: 0,
     });
+  });
+
+  it('can even make things out of nothing', () => {
+    const transformer = new Transformer({
+      to: { $$: '@optimus_prime' },
+    }, {
+      pre: {},
+      post: {
+        '@optimus_prime': o => (o.name = 'Optimus Prime'),
+      },
+    });
+
+    const optimus = transformer.transform({});
+
+    expect(optimus.name).to.equal('Optimus Prime');
+  });
+
+  it('throw error with invalid processor', (done) => {
+    try {
+      const transformer = new Transformer({}, {
+        pre: {
+          $$: 'abc',
+        },
+        post: {},
+      });
+      expect(transformer).to.equal('nothing');
+      return done('failed');
+    } catch (e) {
+      expect(e.message).to.equal('Invalid processor');
+      return done();
+    }
   });
 });
