@@ -1,5 +1,4 @@
-const { makeShadow } = require('./helper/clone')
-const { getByPath } = require('./helper/helper')
+require('hung/power')
 
 const isId = v => /^##/.test(v)
 const isMappingArray = arr => Array.isArray(arr) && typeof arr[0] === 'object' && arr[0]['**']
@@ -19,7 +18,7 @@ const getDataPaths = (t, path = []) => {
 
 let getDataCalls = 0
 const getData = (fromObj, paths) => ++getDataCalls && paths
-  .reduce((all, path) => Object.assign(all, { [path.key]: getByPath(fromObj, path) }), {})
+  .reduce((all, path) => Object.assign(all, { [path.key]: fromObj.getByPath(path) }), {})
 
 let translateCalls = 0
 const translate = (data, toObj, t, parent, key) => {
@@ -40,7 +39,7 @@ const translate = (data, toObj, t, parent, key) => {
     const subToTemplate = toTemplateArray[id]
 
     parent[key] = dataArr.map(subFrom => {
-      const subTo = makeShadow(toObj[0])
+      const subTo = toObj[0].makeShadow()
       delete subTo['**']
 
       return translate(
@@ -93,8 +92,8 @@ module.exports = class Transformer {
   }
 
   transform (from) {
-    const t = makeShadow(this.template)
-    const to = makeShadow(t.to)
+    const t = this.template.makeShadow()
+    const to = t.to.makeShadow()
 
     invoke(from, t.from, this.p.pre)
 

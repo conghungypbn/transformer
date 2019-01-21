@@ -9,7 +9,8 @@
     "standard:fix": "standard --fix"
   },
   "dependencies": {
-    "chai": "^3.5.0"
+    "chai": "^3.5.0",
+    "hung": "0.1.2"
   },
   "devDependencies": {
     "dirty-chai": "^1.2.2",
