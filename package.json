@@ -1,19 +1,20 @@
 {
-  "name": "transformer",
+  "name": "hung-transformer",
   "version": "0.0.1",
   "description": "create transformable object",
   "main": "Transformer.js",
   "scripts": {
-    "test": "mocha test/"
+    "test": "mocha tests/*.test.js",
+    "standard": "standard",
+    "standard:fix": "standard --fix"
   },
   "dependencies": {
     "chai": "^3.5.0"
   },
   "devDependencies": {
-    "eslint": "^3.3.1",
-    "eslint-config-airbnb-base": "^5.0.2",
     "dirty-chai": "^1.2.2",
-    "mocha": "^2.5.3"
+    "mocha": "^5.2.0",
+    "standard": "^12.0.1"
   },
   "author": "hungnc",
   "license": "ISC"
