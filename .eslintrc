@@ -18,7 +18,7 @@
     "quotes": ["error", "single", { "allowTemplateLiterals": true }],
     "no-unused-expressions": ["error", {
       "allowShortCircuit": true,
-      "allowTernary": true,
+      "allowTernary": true
     }],
     "max-len": ["error", {
       "ignoreUrls": true,

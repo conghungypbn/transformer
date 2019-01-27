@@ -35,7 +35,7 @@ const transformer = new Transformer({
   },
 }, {
   pre: {
-    '@fgh': o => (o['~fgh'] = (o.f || 0) + (o.g || 0) + (o.h || 0)),
+    '@fgh': o => (o['~fgh'] = (o.f || 0) + (o.g || 0) + (o.h || 0)), // this will be invoked and pass the object has $$ is `fgh` 
   },
   post: {
     '@X': o => o.x || delete o.x,
