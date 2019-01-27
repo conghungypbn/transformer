@@ -1,9 +1,10 @@
-const chai = require('chai');
-const Transformer = require('../src/Transformer');
+/* global describe it */
+const chai = require('chai')
+const Transformer = require('../src/Transformer')
 
-const expect = chai.expect;
+const expect = chai.expect
 
-const doNothing = () => { };
+const doNothing = () => { }
 describe('Transformer', () => {
   it('can transform an object based on templates', () => {
     const transformer = new Transformer({
@@ -11,39 +12,39 @@ describe('Transformer', () => {
         id: '##id',
         a: {
           b: {
-            c: '##field1',
-          },
+            c: '##field1'
+          }
         },
         d: [{
           '**': '##array1',
-          e: '##arrayField1',
-        }],
+          e: '##arrayField1'
+        }]
       },
       to: {
         x: '##id',
         y: '##field1',
         z: [{
           '**': '##array1',
-          w: '##arrayField1',
-        }],
-      },
+          w: '##arrayField1'
+        }]
+      }
     }, {
       pre: doNothing,
-      post: doNothing,
-    });
+      post: doNothing
+    })
 
     const newObj = transformer.transform({
       id: '1234567',
       a: { b: { c: 'CongHung' } },
-      d: [{ e: 'hahahahaha' }],
-    });
+      d: [{ e: 'hahahahaha' }]
+    })
 
-    console.log('newObj:', newObj);
+    console.log('newObj:', newObj)
 
     expect(newObj).to.deep.equal({
       x: '1234567',
       y: 'CongHung',
-      z: [{ w: 'hahahahaha' }],
-    });
-  });
-});
+      z: [{ w: 'hahahahaha' }]
+    })
+  })
+})
