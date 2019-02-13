@@ -5,17 +5,14 @@ const Transformer = require('../src/Transformer')
 const expect = chai.expect
 
 const doNothing = {}
+
 describe('Transformer', () => {
   it('can transform an object based on templates', () => {
     const transformer = new Transformer({
       from: {
         $$: '@from',
         id: '##id',
-        a: {
-          b: {
-            c: '##field1'
-          }
-        },
+        a: { b: { c: '##field1' } },
         d: [{
           '**': '##array1',
           e: '##arrayField1'
@@ -45,6 +42,7 @@ describe('Transformer', () => {
     })
 
     console.log('newObj:', newObj)
+    console.log('log', transformer.log)
 
     expect(newObj).to.deep.equal({
       x: '1234567',

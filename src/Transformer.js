@@ -1,11 +1,17 @@
 require('hung/power')
 
-const isId = v => /^##/.test(v) // TODO: fix this, idiot
+const PROFILING_METRICS = {
+  getDataPathsCalls: 0,
+  getDataCalls: 0,
+  translateCalls: 0,
+  invokeCalls: 0
+}
+
+const isId = v => v.toString().substring(0, 2) === '##'
 const isMappingArray = arr => Array.isArray(arr) && typeof arr[0] === 'object' && arr[0]['**']
 
-let getDataPathsCalls = 0
 const getDataPaths = (t, path = []) => {
-  getDataPathsCalls++
+  PROFILING_METRICS.getDataPathsCalls++
   if (isId(t)) return [Object.assign(path, { key: t })]
   if (isMappingArray(t)) return [Object.assign(path, { key: t[0]['**'] })]
   if (typeof t !== 'object') return []
@@ -16,13 +22,13 @@ const getDataPaths = (t, path = []) => {
   return paths
 }
 
-let getDataCalls = 0
-const getData = (fromObj, paths) => ++getDataCalls && paths
-  .reduce((all, path) => Object.assign(all, { [path.key]: fromObj.getByPath(path) }), {})
+const getData = (fromObj, paths) => {
+  PROFILING_METRICS.getDataCalls++
+  return paths.reduce((all, path) => Object.assign(all, { [path.key]: fromObj.getByPath(path) }), {})
+}
 
-let translateCalls = 0
 const translate = (data, toObj, t, parent, key) => {
-  translateCalls++
+  PROFILING_METRICS.translateCalls++
   if (isId(toObj)) { parent[key] = data[`${toObj}`]; return toObj }
 
   delete toObj.$$ // remove all procId of toObj;
@@ -59,10 +65,8 @@ const translate = (data, toObj, t, parent, key) => {
   return toObj
 }
 
-let invokeCalls = 0
 const invoke = (o, t, p) => {
-  invokeCalls++
-  // if (!o || !t) return
+  PROFILING_METRICS.invokeCalls++
 
   if (Array.isArray(o)) { o.forEach(subObj => invoke(subObj, t[0], p)); return }
 
@@ -75,7 +79,7 @@ const invoke = (o, t, p) => {
 const error = m => { throw new Error(m) }
 const validateProcessor = t => Object
   .entries(t)
-  .forEach(([k, v]) => (/^@/.test(k) && typeof v === 'function') || error('Invalid p'))
+  .forEach(([k, v]) => (k[0] === '@' && typeof v === 'function') || error('Invalid p'))
 
 module.exports = class Transformer {
   constructor (template, p) {
@@ -103,10 +107,7 @@ module.exports = class Transformer {
 
     invoke(to, t.to, this.p.post)
 
-    this.log.getDataPathsCalls = getDataPathsCalls
-    this.log.getDataCalls = getDataCalls
-    this.log.translateCalls = translateCalls
-    this.log.invokeCalls = invokeCalls
+    this.log = PROFILING_METRICS
 
     return to
   }
