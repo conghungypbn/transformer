@@ -1,6 +1,6 @@
 require('hung/power')
 
-const isId = v => /^##/.test(v)
+const isId = v => /^##/.test(v) // TODO: fix this, idiot
 const isMappingArray = arr => Array.isArray(arr) && typeof arr[0] === 'object' && arr[0]['**']
 
 let getDataPathsCalls = 0
@@ -62,7 +62,7 @@ const translate = (data, toObj, t, parent, key) => {
 let invokeCalls = 0
 const invoke = (o, t, p) => {
   invokeCalls++
-  if (!o || !t) return
+  // if (!o || !t) return
 
   if (Array.isArray(o)) { o.forEach(subObj => invoke(subObj, t[0], p)); return }
 
