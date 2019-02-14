@@ -29,12 +29,8 @@
     "statements": 100,
     "functions": 100,
     "branches": 100,
-    "include": [
-      "src/**/*.js"
-    ],
-    "exclude": [
-      "src/**/*.spec.js"
-    ],
+    "include": [ "src/**/*.js" ],
+    "exclude": [ "src/**/*.spec.js" ],
     "ignore-class-method": "methodToIgnore",
     "reporter": [
       "text",
