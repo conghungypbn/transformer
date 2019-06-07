@@ -11,13 +11,13 @@
     "standard:fix": "standard --fix"
   },
   "dependencies": {
-    "chai": "^3.5.0",
     "hung": "0.1.2"
   },
   "devDependencies": {
+    "chai": "^3.5.0",
     "dirty-chai": "^1.2.2",
     "mocha": "^5.2.0",
-    "nyc": "^13.2.0",
+    "nyc": "^14.1.1",
     "standard": "^12.0.1"
   },
   "author": "hungnc",
@@ -29,15 +29,21 @@
     "statements": 100,
     "functions": 100,
     "branches": 100,
-    "include": [ "src/**/*.js" ],
-    "exclude": [ "src/**/*.spec.js" ],
+    "include": [
+      "src/**/*.js"
+    ],
+    "exclude": [
+      "src/**/*.spec.js"
+    ],
     "ignore-class-method": "methodToIgnore",
     "reporter": [
       "text",
       "text-summary"
     ],
     "require": [],
-    "extension": [".js"],
+    "extension": [
+      ".js"
+    ],
     "cache": true,
     "all": true
   }

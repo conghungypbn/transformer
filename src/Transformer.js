@@ -58,6 +58,8 @@ const translate = (data, toObj, t, parent, key) => {
     return toObj
   }
 
+  if (typeof toObj !== 'object') return toObj
+
   Object
     .entries(toObj)
     .forEach(([k, v]) => translate(data, v, { from: t.from, to: v }, toObj, k))
